@@ -1,20 +1,20 @@
-# data-cleaner.py
+# specialized-data-cleaner.py
 
 import csv
 import random
 
-model_data_adv = open("data/model-data-adv.csv",'w')
-model_data_bin = open("data/model-data-bin.csv",'w')
+model_data_adv = open("data/spec-model-data-adv.csv",'w')
+model_data_bin = open("data/spec-model-data-bin.csv",'w')
 writer_adv = csv.writer(model_data_adv)
 writer_bin = csv.writer(model_data_bin)
 
-training_data_adv = open("data/training-data-adv.csv",'w')
-training_data_bin = open("data/training-data-bin.csv",'w')
+training_data_adv = open("data/spec-training-data-adv.csv",'w')
+training_data_bin = open("data/spec-training-data-bin.csv",'w')
 writer_training_adv = csv.writer(training_data_adv)
 writer_training_bin = csv.writer(training_data_bin)
 
-testing_data_adv = open("data/adj-testing-data-adv.csv",'w')
-testing_data_bin = open("data/adj-testing-data-bin.csv",'w')
+testing_data_adv = open("data/spec-testing-data-adv.csv",'w')
+testing_data_bin = open("data/spec-testing-data-bin.csv",'w')
 writer_testing_adv = csv.writer(testing_data_adv)
 writer_testing_bin = csv.writer(testing_data_bin)
 
@@ -27,7 +27,7 @@ with open('data/scraped-data.csv', mode='r') as data_file:
 		# if the goal is positive than it is completed
 
 		# create a new empty row of data for the model
-		model_row = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+		model_row = [0, 0, 0, 0, 0, 0, 0, 0]
 
 		# Result - positive if won, negative if lost
 		model_row[0] = float(data_row['PTS (PP)']) - float(data_row['PTS (O)'])
@@ -44,27 +44,27 @@ with open('data/scraped-data.csv', mode='r') as data_file:
 		# GOAL 4 - out rebound the opponent
 		model_row[4] = float(data_row['REB (PP)']) - float(data_row['REB (O)'])
 
-		# GOAL 5 - more than 17 offensive rebounds
-		model_row[5] = float(data_row['OREB (PP)']) - 17
+		# # GOAL 5 - more than 17 offensive rebounds
+		# model_row[5] = float(data_row['OREB (PP)']) - 17
 
 		# GOAL 6 - under 12 turnovers
-		model_row[6] = 12 - float(data_row['TO (PP)'])
+		model_row[5] = 12 - float(data_row['TO (PP)'])
 
-		# GOAL 7 - force 18 or more turnovers
-		model_row[7] = float(data_row['TO (O)']) - 15
+		# # GOAL 7 - force 18 or more turnovers
+		# model_row[7] = float(data_row['TO (O)']) - 18
 
 		# GOAL 8 - under 30 pts in first half
-		model_row[8] = 30 - float(data_row['H1 (O)'])
+		model_row[6] = 30 - float(data_row['H1 (O)'])
 
 		# GOAL 9 - under 30 pts in second half
-		model_row[9] = 30 - float(data_row['H2 (O)'])
+		model_row[7] = 30 - float(data_row['H2 (O)'])
 
 
 		# BINARY
 		# Either the goal was achieved or not
 
 		# create a new row of data for the model
-		model_row_bin = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+		model_row_bin = [0, 0, 0, 0, 0, 0]
 
 		# Win or Loss - Dependent Variable
 		if float(data_row['PTS (PP)']) > float(data_row['PTS (O)']):
@@ -79,33 +79,18 @@ with open('data/scraped-data.csv', mode='r') as data_file:
 		if float(data_row['FG% (O)']) < 0.40:
 			model_row_bin[2] = 1
 
-		# GOAL 3 - make more FT than they shoot
-		if float(data_row['FTM (PP)']) > float(data_row['FTA (O)']):
-			model_row_bin[3] = 1
-
 		# GOAL 4 - out rebound the opponent
 		if float(data_row['REB (PP)']) > float(data_row['REB (O)']):
-			model_row_bin[4] = 1
-
-		# GOAL 5 - more than 17 offensive rebounds
-		if float(data_row['OREB (PP)']) > 17:
-			model_row_bin[5] = 1
+			model_row_bin[3] = 1
 
 		# GOAL 6 - under 12 turnovers
 		if float(data_row['TO (PP)']) < 12:
-			model_row_bin[6] = 1
+			model_row_bin[4] = 1
 
 		# GOAL 7 - force 18 or more turnovers
 		if float(data_row['TO (O)']) >= 18:
-			model_row_bin[7] = 1
+			model_row_bin[5] = 1
 
-		# GOAL 8 - under 30 pts in first half
-		if float(data_row['H1 (O)']) < 30:
-			model_row[8] = 1
-
-		# GOAL 9 - under 30 pts in second half
-		if float(data_row['H2 (O)']) < 30:
-			model_row_bin[9] = 1
 
 		# Writing the cleaned data
 

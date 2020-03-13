@@ -1,16 +1,16 @@
 # sagehens-scraper.py
 
-# Get box score data from Sagehens.com basketball team seasons
+# Python script to scrape the boxscore data from Sagehens.com
 
 from selenium import webdriver
 from selenium.webdriver import Safari
 import csv
 
-# create our output csv file 
+# create our output csv file
 output_data = open("data.csv",'w')
 writer = csv.writer(output_data)
 
-years = ['2018-19', '2017-18', '2016-17', '2015-16', '2014-15', '2013-14', '2012-13', '2011-12']
+years = ['2019-20', '2018-19', '2017-18', '2016-17', '2015-16', '2014-15', '2013-14', '2012-13', '2011-12']
 url = 'https://www.sagehens.com/sports/mbkb/{}/teams/pomonapitzer?view=gamelog'
 
 # create the driver
@@ -18,7 +18,7 @@ driver = webdriver.Safari()
 
 # get all the years data
 for year in years:
-	
+
 	# go to specific year url
 	driver.get(url.format(year))
 
@@ -52,10 +52,10 @@ for year in years:
 
 		# see if PP was home or away team
 		away_team_name = driver.find_element_by_xpath('//*[@id="mainbody"]/article/div[2]/div[2]/section[1]/div[1]/div[2]/div/div/div/table/caption/h2/span')
-		
+
 		# now create one row of data such that it is | PP | Opponent |
 		row = []
-		
+
 		if away_team_name.text == "Pomona-Pitzer":
 			for val in away_values:
 				row.append(val.text.strip().split('-'))
@@ -69,7 +69,7 @@ for year in years:
 
 			row.append(["A"]) # mark PP was away team
 
-		else: 
+		else:
 			for val in home_values:
 				row.append(val.text.strip().split('-'))
 			row.append([home_first_half.text])
@@ -85,7 +85,7 @@ for year in years:
 		# format the row evenly
 		row = [[elt for a in row for elt in a]]
 		print(row)
-		
+
 		# write that row to a csv file
 		writer.writerows(row)
 
